@@ -6,6 +6,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 from Respire.Entity import EvaluationConfig
 from Respire.Utils import read_yaml, create_directories,save_json
+from tensorflow.keras.applications.vgg16 import preprocess_input
 
 
 class Evaluation:
@@ -16,7 +17,7 @@ class Evaluation:
     def _valid_generator(self):
 
         datagenerator_kwargs = dict(
-            rescale = 1./255,
+            preprocessing_function = preprocess_input,
             validation_split=0.20
         )
 
@@ -55,18 +56,29 @@ class Evaluation:
 
     
     def log_into_mlflow(self):
-        dagshub.init(repo_owner='HemaKalyan45', repo_name='End-to-End-Chest-Disease-Classification', mlflow=True)
+        try:
+            dagshub.init(repo_owner='HemaKalyan45', repo_name='End-to-End-Chest-Disease-Classification', mlflow=True)
+            mlflow.set_registry_uri(self.config.mlflow_uri)
+            tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
+            
+            with mlflow.start_run():
+                mlflow.log_params(self.config.all_params)
+                mlflow.log_metrics(
+                    {"loss": self.score[0], "accuracy": self.score[1]}
+                )
 
-        mlflow.set_registry_uri(self.config.mlflow_uri)
-        tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
-        
-        with mlflow.start_run():
-            mlflow.log_params(self.config.all_params)
-            mlflow.log_metrics(
-                {"loss": self.score[0], "accuracy": self.score[1]}
-            )
-
-            if tracking_url_type_store != "file":
-                mlflow.keras.log_model(self.model, "model", registered_model_name="VGG16Model")
-            else:
-                mlflow.keras.log_model(self.model, "model")
+                if tracking_url_type_store != "file":
+                    mlflow.keras.log_model(self.model, "model", registered_model_name="VGG16Model")
+                else:
+                    mlflow.keras.log_model(self.model, "model")
+        except Exception as e:
+            import logging
+            logging.warning(f"Could not log to MLflow via DagsHub: {e}. Logging locally using fallback MLflow tracking instead.")
+            try:
+                mlflow.set_tracking_uri("file:./mlruns")
+                with mlflow.start_run():
+                    mlflow.log_params(self.config.all_params)
+                    mlflow.log_metrics({"loss": self.score[0], "accuracy": self.score[1]})
+                    mlflow.keras.log_model(self.model, "model")
+            except Exception as ex:
+                logging.warning(f"Local MLflow fallback failed: {ex}")

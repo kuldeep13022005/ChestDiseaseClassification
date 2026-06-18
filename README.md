@@ -1,3 +1,13 @@
+---
+title: End-to-End Chest Disease Classification
+emoji: 🫁
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 8080
+pinned: false
+---
+
 # End-to-End-Chest-Disease-Classification
 By [<b>Hema Kalyan Murapaka</b>](https://kalyanm45.github.io)
 

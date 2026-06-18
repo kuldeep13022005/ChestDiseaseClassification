@@ -1,6 +1,7 @@
 import tensorflow as tf
 from pathlib import Path
 from Respire.Entity import TrainingConfig
+from tensorflow.keras.applications.vgg16 import preprocess_input
 
 
 class Training:
@@ -14,7 +15,7 @@ class Training:
     def train_valid_generator(self):
 
         datagenerator_kwargs = dict(
-            rescale = 1./255,
+            preprocessing_function = preprocess_input,
             validation_split=0.20
         )
 

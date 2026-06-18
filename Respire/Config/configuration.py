@@ -75,7 +75,7 @@ class ConfigurationManager:
     def get_evaluation_config(self) -> EvaluationConfig:
         eval_config = EvaluationConfig(
             Path_of_Model = Path(self.config.Model_Training.Trained_Model_Path),
-            Training_Data = Path(self.config.Data_Ingestion.Unzip_Dir),
+            Training_Data = Path(os.path.join(self.config.Data_Ingestion.Unzip_Dir, "Chest-CT-Scan-data")),
             mlflow_uri="https://dagshub.com/HemaKalyan45/End-to-End-Chest-Disease-Classification.mlflow",
             all_params=self.params,
             params_image_size=self.params.IMAGE_SIZE,
