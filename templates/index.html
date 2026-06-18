@@ -90,7 +90,7 @@
 
         .grid-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1.2fr;
             gap: 2.5rem;
         }
 
@@ -111,6 +111,7 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             display: flex;
             flex-direction: column;
+            min-height: 500px;
         }
 
         .panel-title {
@@ -218,7 +219,8 @@
         .btn-container {
             display: flex;
             gap: 1rem;
-            margin-top: 1.5rem;
+            margin-top: auto;
+            padding-top: 1.5rem;
         }
 
         .btn-action {
@@ -278,7 +280,6 @@
             justify-content: center;
             align-items: center;
             flex-grow: 1;
-            text-align: center;
             padding: 1rem 0;
         }
 
@@ -304,56 +305,92 @@
             animation: fadeIn 0.4s ease forwards;
         }
 
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 1.4fr;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Visualizer Panel */
+        .visualizer-container {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--panel-border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+        }
+
+        .visualizer-caption {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-align: center;
         }
 
         .badge-verdict {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 1rem 2rem;
-            border-radius: 1rem;
-            font-size: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 1.25rem;
             font-weight: 700;
-            margin-bottom: 2rem;
             text-transform: uppercase;
             letter-spacing: -0.02em;
             width: 100%;
+            text-align: center;
         }
 
         .badge-verdict.danger {
-            background: rgba(255, 23, 68, 0.1);
+            background: rgba(255, 23, 68, 0.08);
             color: var(--danger);
-            border: 1px solid rgba(255, 23, 68, 0.25);
-            box-shadow: 0 0 20px rgba(255, 23, 68, 0.15);
+            border: 1px solid rgba(255, 23, 68, 0.2);
+            box-shadow: 0 0 20px rgba(255, 23, 68, 0.1);
         }
 
         .badge-verdict.success {
-            background: rgba(0, 230, 118, 0.1);
+            background: rgba(0, 230, 118, 0.08);
             color: var(--success);
-            border: 1px solid rgba(0, 230, 118, 0.25);
-            box-shadow: 0 0 20px rgba(0, 230, 118, 0.15);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.1);
         }
 
         /* Details list */
         .meta-list {
             width: 100%;
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.01);
             border: 1px solid var(--panel-border);
             border-radius: 0.75rem;
-            padding: 1.25rem;
+            padding: 1rem;
             text-align: left;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0.65rem;
         }
 
         .meta-item {
             display: flex;
             justify-content: space-between;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .meta-label {
@@ -482,26 +519,37 @@
 
                     <!-- Analysis Result Card -->
                     <div class="result-card" id="result-card">
-                        <div class="badge-verdict" id="result-badge">
-                            Large Cell Carcinoma
-                        </div>
-                        
-                        <div class="meta-list">
-                            <div class="meta-item">
-                                <span class="meta-label">Diagnostic Status</span>
-                                <span class="meta-value" style="color: var(--accent-blue);" id="status-val">Anomaly Detected</span>
+                        <div class="result-grid">
+                            <!-- Visualizer Subpanel -->
+                            <div class="visualizer-container">
+                                <div id="lungs-svg-container" style="width: 100%; display: flex; align-items: center; justify-content: center;"></div>
+                                <div class="visualizer-caption" id="lungs-caption">Lungs Map</div>
                             </div>
-                            <div class="meta-item">
-                                <span class="meta-label">AI Engine</span>
-                                <span class="meta-value">VGG16 Transfer Learning</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="meta-label">Target Area</span>
-                                <span class="meta-value">Lungs (Chest CT)</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="meta-label">Processing Time</span>
-                                <span class="meta-value">~140ms</span>
+                            
+                            <!-- Diagnostic Details Subpanel -->
+                            <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 1rem;">
+                                <div class="badge-verdict" id="result-badge">
+                                    Large Cell Carcinoma
+                                </div>
+                                
+                                <div class="meta-list">
+                                    <div class="meta-item">
+                                        <span class="meta-label">Diagnostic Status</span>
+                                        <span class="meta-value" style="color: var(--accent-blue);" id="status-val">Anomaly Detected</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">AI Engine</span>
+                                        <span class="meta-value">VGG16 Transfer Learning</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">Target Area</span>
+                                        <span class="meta-value">Lungs (Chest CT)</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-label">Processing Time</span>
+                                        <span class="meta-value">~140ms</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -519,6 +567,82 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
         var base_data = "";
+
+        function updateLungsVisualization(prediction) {
+            var container = $("#lungs-svg-container");
+            var caption = $("#lungs-caption");
+            container.html("");
+            
+            var svgHead = `<svg viewBox="0 0 200 200" width="100%" height="100%" style="max-height: 200px; filter: drop-shadow(0 0 4px rgba(0,0,0,0.5));">
+              <defs>
+                <filter id="glow-red" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="5" result="blur"/>
+                  <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                </filter>
+                <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="5" result="blur"/>
+                  <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                </filter>
+              </defs>
+              <!-- Trachea & Bronchi -->
+              <path d="M100 25 v50 m0 0 l-22 22 m22 -22 l22 22" stroke="#4a5568" stroke-width="5" stroke-linecap="round" fill="none"/>
+              
+              <!-- Left Lung Lobe -->
+              <path d="M92 80 C65 65, 35 95, 42 145 C47 165, 75 175, 92 165 Z" fill="rgba(0, 242, 254, 0.04)" stroke="var(--accent-blue)" stroke-width="1.5" stroke-linejoin="round"/>
+              
+              <!-- Right Lung Lobe -->
+              <path d="M108 80 C135 65, 165 95, 158 145 C153 165, 125 175, 108 165 Z" fill="rgba(0, 242, 254, 0.04)" stroke="var(--accent-blue)" stroke-width="1.5" stroke-linejoin="round"/>`;
+              
+            var svgBody = "";
+            
+            var predClean = prediction.toLowerCase().trim();
+            if (predClean.includes("adenocarcinoma")) {
+                // Peripheral mass in left lung
+                svgBody = `
+                  <!-- Adenocarcinoma Tumor Highlight -->
+                  <circle cx="62" cy="135" r="10" fill="var(--danger)" filter="url(#glow-red)"/>
+                  <circle cx="62" cy="135" r="3" fill="#ffffff"/>
+                  <!-- Indicator Line -->
+                  <path d="M62 135 L35 110 h-10" stroke="var(--danger)" stroke-width="1" fill="none" stroke-linecap="round"/>
+                  <text x="15" y="98" fill="var(--danger)" font-size="8" font-weight="600">PERIPHERAL LESION</text>
+                `;
+                caption.text("Peripheral Tumor Map").css("color", "var(--danger)");
+            } else if (predClean.includes("large cell")) {
+                // Large tumor in outer right lung
+                svgBody = `
+                  <!-- Large Cell Tumor Highlight -->
+                  <circle cx="138" cy="125" r="14" fill="var(--danger)" filter="url(#glow-red)"/>
+                  <circle cx="138" cy="125" r="4" fill="#ffffff"/>
+                  <!-- Indicator Line -->
+                  <path d="M138 125 L165 100 h10" stroke="var(--danger)" stroke-width="1" fill="none" stroke-linecap="round"/>
+                  <text x="135" y="88" fill="var(--danger)" font-size="8" font-weight="600">LARGE CELL MASS</text>
+                `;
+                caption.text("Large Mass Map").css("color", "var(--danger)");
+            } else if (predClean.includes("squamous")) {
+                // Central hilar mass near right bronchus
+                svgBody = `
+                  <!-- Squamous Tumor Highlight -->
+                  <circle cx="118" cy="98" r="8" fill="var(--danger)" filter="url(#glow-red)"/>
+                  <circle cx="118" cy="98" r="2.5" fill="#ffffff"/>
+                  <!-- Indicator Line -->
+                  <path d="M118 98 L145 85 h10" stroke="var(--danger)" stroke-width="1" fill="none" stroke-linecap="round"/>
+                  <text x="120" y="73" fill="var(--danger)" font-size="8" font-weight="600">BRONCHIAL MASS</text>
+                `;
+                caption.text("Hilar Tumor Map").css("color", "var(--danger)");
+            } else {
+                // Normal - clear lungs with green glow
+                svgBody = `
+                  <!-- Normal Clear Lungs Glow -->
+                  <path d="M92 80 C65 65, 35 95, 42 145 C47 165, 75 175, 92 165 Z" fill="rgba(0, 230, 118, 0.08)" stroke="var(--success)" stroke-width="1" opacity="0.6"/>
+                  <path d="M108 80 C135 65, 165 95, 158 145 C153 165, 125 175, 108 165 Z" fill="rgba(0, 230, 118, 0.08)" stroke="var(--success)" stroke-width="1" opacity="0.6"/>
+                  <text x="76" y="128" fill="var(--success)" font-size="11" font-weight="bold" letter-spacing="0.05em">CLEAR</text>
+                `;
+                caption.text("Clear Lung Fields").css("color", "var(--success)");
+            }
+            
+            var svgFoot = `</svg>`;
+            container.html(svgHead + svgBody + svgFoot);
+        }
 
         function sendRequest(base64Data){
             if(!base64Data) return;
@@ -557,6 +681,9 @@
                         statusVal.text("Anomaly Detected");
                         statusVal.css("color", "var(--danger)");
                     }
+
+                    // Update Lungs Visualization
+                    updateLungsVisualization(prediction);
 
                     // Toggle Display
                     $("#report-placeholder").hide();
